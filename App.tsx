@@ -21,7 +21,6 @@ const App = () => {
         body: remoteMessage?.notification?.body,
       };
 
-      console.log(remoteMessage);
       await displayNotification(channel, notification);
     });
 
