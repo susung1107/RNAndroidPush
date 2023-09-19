@@ -21,6 +21,17 @@ export const displayNotification = async (
   });
 };
 
+export const getFCMToken = async () => {
+  return new Promise<string>(async resolve => {
+    return await messging()
+      .getToken()
+      .then((token: string) => {
+        resolve(token);
+        console.log('FCM Token : ', token);
+      });
+  });
+};
+
 export const getInitialNotification = async () => {
   return new Promise<void>(async resolve => {
     await messging()

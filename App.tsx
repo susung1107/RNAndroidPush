@@ -6,10 +6,15 @@ import notifee, {EventType} from '@notifee/react-native';
 import {
   displayNotification,
   getInitialNotification,
+  getFCMToken,
 } from './src/utils/Notification';
 
 const App = () => {
   useEffect(() => {
+    const FCMToken = async (): Promise<string> => {
+      return await getFCMToken();
+    };
+
     // 알림 수신
     const onMessage = messaging().onMessage(async remoteMessage => {
       const channel = {
@@ -43,6 +48,8 @@ const App = () => {
         console.log('앱이 켜져있는데 알림을 누름', detail);
       }
     });
+
+    FCMToken();
 
     return () => {
       onNotificationOpenedApp();
