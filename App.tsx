@@ -1,119 +1,73 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React, {useEffect} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 
-import React, {type PropsWithChildren} from 'react';
+import messaging from '@react-native-firebase/messaging';
+import notifee, {EventType} from '@notifee/react-native';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  displayNotification,
+  getInitialNotification,
+} from './src/utils/Notification';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App = () => {
+  useEffect(() => {
+    // 알림 수신
+    const onMessage = messaging().onMessage(async remoteMessage => {
+      const channel = {
+        id: 'default',
+        name: 'default',
+      };
+      const notification = {
+        title: remoteMessage?.notification?.title,
+        body: remoteMessage?.notification?.body,
+      };
 
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
+      await displayNotification(channel, notification);
+    });
+
+    // 앱이 꺼져있을 때 알림을 누름
+    getInitialNotification().then(() => {
+      console.log('앱이 꺼져있는데 눌러서 켬');
+    });
+
+    // 앱이 최소화 되어 있는데 알림을 눌러서 활성화 했을 때
+    const onNotificationOpenedApp = messaging().onNotificationOpenedApp(
+      async () => {
+        console.log('앱이 최소화 되어 있는데 알림을 눌러서 활성화함');
+      },
+    );
+
+    // 사용자가 앱을 이용중 일 떄
+    const onForegroundEvent = notifee.onForegroundEvent(async observer => {
+      const {type, detail} = observer;
+      if (type === EventType.PRESS) {
+        console.log('앱이 켜져있는데 알림을 누름', detail);
+      }
+    });
+
+    return () => {
+      onNotificationOpenedApp();
+      onForegroundEvent();
+      onMessage();
+    };
+  }, []);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={[styles.container]}>
+      <Text style={[styles.title]}>안드로이드 푸시 알림 테스트</Text>
     </View>
   );
 };
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    fontSize: 16,
+    includeFontPadding: false,
+    color: '#333',
   },
 });
 

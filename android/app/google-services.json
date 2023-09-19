@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "893081251840",
+    "project_id": "rnandroidpush-93bf4",
+    "storage_bucket": "rnandroidpush-93bf4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893081251840:android:57fa11ceefea41b38d28e5",
+        "android_client_info": {
+          "package_name": "com.rnskeleton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIVUT4huJ6zdPDhFob0OSwHc1OpF3W9iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
